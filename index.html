@@ -8,11 +8,19 @@
 </head>
 <body>
     hello
-
+    <div id="app"></div>
     <script src="dist/umd/vue.js"></script>
 
     <script>
-        console.log(Vue)
+        let vm = new new Vue({
+            el:'#app', //vue 以某个节点为基准
+            data() {
+                return {
+                    a: 1,
+                };
+            },
+        })
+        console.log(vm.$options)
     </script>
 </body>
 </html>
