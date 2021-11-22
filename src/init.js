@@ -1,6 +1,6 @@
 import { initState } from "./state";
 
-export function initMixin(Vue){
+export function initMixin(Vue){ // 拓展原型
     Vue.prototype._init = function (options){
         // Vue的初始化
         // Vue里面会把用户填的所有属性都放到当前的实例上-index.html中的let vm
@@ -15,6 +15,7 @@ export function initMixin(Vue){
         // 这里先做状态初始化，然后对不同的属性做不同的处理
         // 新建一个state.js 做状态的初始化
         initState(vm);
+
 
         
     }
