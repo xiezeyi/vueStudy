@@ -1,4 +1,9 @@
 // 这里定义一个类，用于底部的返回
+// 这个类的作用就是 创建一个类，把所有的观测方法都封装到观测的内部
+
+import { arrayMethods } from "./array";
+
+// 什么时候用类：封装、继承就会想到类，这里的类就是对属性观测的类
 class Observer{
   constructor(value){
     console.log(value)
@@ -6,7 +11,24 @@ class Observer{
     // 这里就要开始对这个对象进行劫持了，即value
     // 使用defineProperty 重新定义属性
     // 定义的属性可能是数组也可能是对象，用walk()方法内部实现来重新定义
-    this.walk(value);
+
+    // 开始添加对数组的判断操作
+    if(Array.isArray(value)){
+      // 这里进来的即是数组了，这里希望能对数组的方法和改变数组内容的方法进行重写
+      // 希望调用push shift unshift splice sort reverse pop,这些只要调用了，肯定说明这个数据变化了
+      // 故进行函数劫持/切片编程
+      // 因为在调用方法的时候将这些方法重写了，那么怎么重写呢
+      // 这里单独去创建一个array.js去单独搞这件事情
+
+      // 将array.js的变量arrayMethods放进来
+      // 并让当前的属性可以通过量 找到 刚才最后更新好的函数
+      // 怎么找，数组调的是push，调的是自己的push，concat就调原来的
+      
+      value.__proto__ =  arrayMethods
+    }else{ // 不是数组走以前的逻辑
+      this.walk(value);
+    }
+    
   }
   walk(data){
     // 获取对象的key
@@ -49,7 +71,7 @@ export function observer(data) {
     console.log(data) // 会货到到data对象，现在主要流程就是开始对这个data进行劫持
     // 这边的data必须是对象才可以进行观测,不是对象（123123）就返回
     // type null 也是object
-    if(typeof data !== 'object' && data !== null){
+    if(typeof data !== 'object' || data !== null){
       return;
     }
     // 接下来就是去观测这个对象，这里专门写一个类来进行观测，因为观测的对象
