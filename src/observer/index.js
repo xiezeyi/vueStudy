@@ -25,10 +25,22 @@ class Observer{
       // 怎么找，数组调的是push，调的是自己的push，concat就调原来的
       
       value.__proto__ =  arrayMethods
+
+      // 数组中可能还含有对象，故观测数组中的对象类型，对象变化也要做一些事情
+      // 观测对象数组里的属性
+      this.observerArray(value);
     }else{ // 不是数组走以前的逻辑
       this.walk(value);
     }
     
+  }
+  observerArray(value){
+    // 对数组里的每一项的对象都进行观测
+    value.forEach(item =>{
+      // 每一项都进行观测，然后观测数组中的对象类型
+      // 相当于循环数组里的每一项，然后再进行观测 
+      observer(item);
+    })
   }
   walk(data){
     // 获取对象的key
