@@ -16,11 +16,19 @@
             el:'#app', //vue 以某个节点为基准
             data() {
                 return {
-                    a: 1,
+                    a: {a:{a:1}},
                 };
             },
         })
         console.log(vm.$options)
+        // 默认弄个数据会递归去用defineProperty进行拦截,
+        // 这里就会发现，层级越深，性能就越差，所以会将defineProperty(vue2)在vue3?中
+        // 换成Proxy。
+        console.log(vm._data.a.a.a)
+        // 这里仅仅多层的递归调用，达不到新进的参数也能进行截取
+        
+        vm._data.a = {b:1}
+        vm._data.a.b = 100
     </script>
 </body>
 </html>

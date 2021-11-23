@@ -20,6 +20,9 @@ class Observer{
 }
 // 这里现在只能做了一层的get和set，即内部的参数与没有get和set方法，只有最外层的有
 function defineReactive(data,key,value){
+  // 这里增加一个递归，来实现对多层的对象也能进行观测
+    // 如果值是对象类型，再进行观测 
+  observer(value)
     Object.defineProperty(data,key,{
       get(){
         console.log('用户获取值了')
@@ -30,6 +33,11 @@ function defineReactive(data,key,value){
         // 为什么要用value = newValue呢，如果用
         // data[key] = value 则会造成死循环 会造成一个闭包！故这里借助第三个变量value进行修改
         if(newValue == value ) return
+        // 这里多了一行监控，是因为在设置值的时候，也需要对该值进行是否是对象的拦截判断，如果是对象
+        // 则应该进行观测，添加对应的方法
+        // 如果用户将值改为对象，则继续监控
+        observer(newValue)
+        // 用第个值（外部值）赋值
         value = newValue
       }
     })
