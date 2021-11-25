@@ -28,13 +28,13 @@ class Observer{
 
       // 数组中可能还含有对象，故观测数组中的对象类型，对象变化也要做一些事情
       // 观测对象数组里的属性
-      this.observerArray(value);
+      this.observeArray(value);
     }else{ // 不是数组走以前的逻辑
       this.walk(value);
     }
     
   }
-  observerArray(value){
+  observeArray(value){
     // 对数组里的每一项的对象都进行观测
     value.forEach(item =>{
       // 每一项都进行观测，然后观测数组中的对象类型
