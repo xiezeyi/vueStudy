@@ -6,6 +6,30 @@ import { arrayMethods } from "./array";
 // 什么时候用类：封装、继承就会想到类，这里的类就是对属性观测的类
 class Observer{
   constructor(value){
+    // 这里需要将array.js下的观测数组方法挂载到这里的value下
+    // 使用defineProperty 重新定义属性
+    // 属性(__ob__)是一个自定义属性，作用
+    // 描述这个对象呗观测过了
+    // 判断一个对象是否被观测过，看它有没有这个__ob__这个属性
+
+    // 这里不能直接使用value.__ob__ = this   这样写相当于一个自定义属性，
+    // 自定义属性在循环过程中就会再次递归它的属性，然后this是个对象类型，
+    // 就会无限递归了，故不能这么写，会调walk(data){这里的defineReactive }
+    // 变成响应式的，然后this又是个对象，就再去变成响应式
+    // 所以这里运用了defineProperty的个性把它变成不能枚举的
+    // 写完这个array.js就可以通过this.__ob__来获取方法
+    Object.defineProperty(value,'__ob__',{
+      // 不能枚举的,好处是在this.walk的时候 ，即循环的时候是不能获取到属性的
+      // 归纳：不能被枚举，不能被循环，即这里加完后是循环不到ob的
+      // 这样就可以确定所有的数据只要是__ob__它就是响应式的，下面要价格判断
+      enumerable:false,
+      // 不能随便删掉
+      configurable:false,
+      value:this
+    })
+    
+
+
     console.log(value)
     // 值到这里的就都是一个对象，而不是一个null或者是一个123123
     // 这里就要开始对这个对象进行劫持了，即value
@@ -84,8 +108,16 @@ export function observer(data) {
     // 这边的data必须是对象才可以进行观测,不是对象（123123）就返回
     // type null 也是object
     if(typeof data !== 'object' || data !== null){
-      return;
+      return data;
     }
+
+    // 数据有__ob__则不用再观测了，已经OKO了
+    // 已经观测过的直接把数据返回，防止数据重复被观测
+    if(data.__ob__){
+      return data;
+    }
+
+
     // 接下来就是去观测这个对象，这里专门写一个类来进行观测，因为观测的对象
     // 可能是要观测数组，也可能是观测对象，也可能是其它的一些方法，现在要将
     // 这些方法耦合在一起做成一个功能，这时候就应该使用一个类

@@ -1,5 +1,5 @@
 import { observer } from "./observer/index";
-
+import { proxy } from "./util.js"
 export function initState(vm){
     // 这里刚刚有挂载一个vm.$options,即用户传过来的所有选项
     
@@ -41,6 +41,12 @@ function initData(vm) {
     // 重新定义对象的get方法和set方法，当它获取时可以做一些事，当它设置的 
     // 时候可以做一些事
     // 数组 单独处理的
+
+    // 当我去vm上取属性时，帮我讲属性的取值代理到vm._data上
+    for(let key in data){
+      // 代理方法，当我去vm上取值的时候，应该去_data上取值，取key
+        proxy(vm,'_data',key) 
+    }
 
     // data肯定是一个对象，但data里面就有可能放数组了，故这里不做判断了
     // 专门写一个模块，这个模块是做响应式数据原理的。
