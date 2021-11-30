@@ -1,6 +1,7 @@
 // 这里定义一个类，用于底部的返回
 // 这个类的作用就是 创建一个类，把所有的观测方法都封装到观测的内部
 
+import { defineProperty } from "../util";
 import { arrayMethods } from "./array";
 
 // 什么时候用类：封装、继承就会想到类，这里的类就是对属性观测的类
@@ -18,17 +19,17 @@ class Observer{
     // 变成响应式的，然后this又是个对象，就再去变成响应式
     // 所以这里运用了defineProperty的个性把它变成不能枚举的
     // 写完这个array.js就可以通过this.__ob__来获取方法
-    Object.defineProperty(value,'__ob__',{
-      // 不能枚举的,好处是在this.walk的时候 ，即循环的时候是不能获取到属性的
-      // 归纳：不能被枚举，不能被循环，即这里加完后是循环不到ob的
-      // 这样就可以确定所有的数据只要是__ob__它就是响应式的，下面要价格判断
-      enumerable:false,
-      // 不能随便删掉
-      configurable:false,
-      value:this
-    })
-    
-
+    // Object.defineProperty(value,'__ob__',{
+    //   // 不能枚举的,好处是在this.walk的时候 ，即循环的时候是不能获取到属性的
+    //   // 归纳：不能被枚举，不能被循环，即这里加完后是循环不到ob的
+    //   // 这样就可以确定所有的数据只要是__ob__它就是响应式的，下面要价格判断
+    //   enumerable:false,
+    //   // 不能随便删掉
+    //   configurable:false,
+    //   value:this
+    // })
+    // 封装
+    defineProperty(value,'__ob__',this);
 
     console.log(value)
     // 值到这里的就都是一个对象，而不是一个null或者是一个123123
